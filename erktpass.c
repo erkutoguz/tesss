@@ -61,7 +61,7 @@ DES *initialize_des(char *plain_text, char *plain_key)
 	pkey = gen_key56(bkey);
 
 	memcpy(des->text, ptext, 64);
-	memcpy(des->key, pkey, 64);
+	memcpy(des->key, pkey, 56);
 
 	l_1 = (char *)malloc(32);
 	r_1 = (char *)malloc(32);
@@ -211,6 +211,8 @@ void run_des(DES * des, char *dst, int type) {
 }
 
 void decrypt(DES * des, char *dst) {
+	char *ct_ip = ip(dst);
+	split_half(ct_ip, des->l_1, des->r_1, 64);
 	run_des(des, dst, 0);
 }
 
@@ -333,15 +335,19 @@ void int_2_bin(int i, char *dst)
 void perm_r32(char *r32)
 {
 	int i;
+	char tmp[32];
+	memcpy(tmp, r32, 32);
 	for (i = 0; i < 32; ++i) {
-		r32[i] = r32[P_TABLE[i] - 1];
+		r32[i] = tmp[P_TABLE[i] - 1];
 	}
 }
 
 void fp(char *dst)
 {
 	int i;
+	char tmp[64];
+	memcpy(tmp, dst ,64);
 	for (i = 0; i < 64; ++i) {
-		dst[i] = dst[FP_TABLE[i] - 1];
+		dst[i] = tmp[FP_TABLE[i] - 1];
 	}
 }
